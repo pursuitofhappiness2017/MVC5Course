@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MVC5Course.Models;
+using System.Data.Entity.Validation;
 
 namespace MVC5Course.Controllers
 {
@@ -16,7 +17,8 @@ namespace MVC5Course.Controllers
         {
             var all = db.Product.AsQueryable();
 
-            var data = all.Where(p => p.Active == true &&
+            var data = all.Where(p => p.IsDeleted == false &&
+                        p.Active == true &&
                         p.ProductName.Contains("Black"))
                         .OrderByDescending(p => p.ProductId);
 
@@ -86,10 +88,21 @@ namespace MVC5Course.Controllers
             //}
 
             //2.利用導覽屬性去移除有關聯的OrderLine
-            db.OrderLine.RemoveRange(product.OrderLine);
+            //db.OrderLine.RemoveRange(product.OrderLine);
 
-            db.Product.Remove(product);
-            db.SaveChanges();
+            //db.Product.Remove(product);
+            product.IsDeleted = true;
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                throw ex;
+            }
+
+            
 
             return RedirectToAction("Index");
         }
