@@ -16,15 +16,15 @@ namespace MVC5Course.Models
     public partial class FabricsEntities : DbContext
     {
         public FabricsEntities()
-            : base("name=FabricsEntities")
+            : base("name=FabricsEntities") //連結字串
         {
         }
-    
+        //Code First才會呼叫
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
         }
-    
+        //Virtual拿掉就沒有延遲載入了    
         public virtual DbSet<Client> Client { get; set; }
         public virtual DbSet<Occupation> Occupation { get; set; }
         public virtual DbSet<Order> Order { get; set; }

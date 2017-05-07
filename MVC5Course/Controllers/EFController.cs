@@ -75,8 +75,20 @@ namespace MVC5Course.Controllers
 
         public ActionResult Delete(int id)
         {
-            var item = db.Product.Find(id);
-            db.Product.Remove(item);
+            var product = db.Product.Find(id);
+
+            //1.利用導覽屬性去移除有關聯的OrderLine
+            //foreach (var item in product.OrderLine)
+            //{
+            //    db.OrderLine.Remove(item);
+            //    //不可在此db.SaveChanges(), 
+            //    //因為每次都算一筆交易, 之後會造成無法Roll Back;
+            //}
+
+            //2.利用導覽屬性去移除有關聯的OrderLine
+            db.OrderLine.RemoveRange(product.OrderLine);
+
+            db.Product.Remove(product);
             db.SaveChanges();
 
             return RedirectToAction("Index");
