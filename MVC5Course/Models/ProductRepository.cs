@@ -9,7 +9,19 @@ namespace MVC5Course.Models
 	{
         public override IQueryable<Product> All()
         {
-            return this.Where(x => x.Is刪除);
+            return this.Where(x => !x.Is刪除);
+        }
+
+        public IQueryable<Product> All(bool showAll)
+        {
+            if (showAll)
+            {
+                return base.All();
+            }
+            else
+            {
+                return this.All();
+            }
         }
 
         public Product Get單筆資料ByProductId(int id)
@@ -34,7 +46,15 @@ namespace MVC5Course.Models
         {
             this.UnitOfWork.Context.Entry(product).State = EntityState.Modified;
         }
-	}
+
+        public override void Delete(Product entity)
+        {
+            //關閉驗證
+            this.UnitOfWork.Context.Configuration.ValidateOnSaveEnabled = false;
+
+            entity.Is刪除 = true;
+        }
+    }
 
 	public  interface IProductRepository : IRepository<Product>
 	{
