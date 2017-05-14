@@ -34,6 +34,7 @@ namespace MVC5Course.Controllers
         }
 
         [SharedViewBag]
+        [LocalOnly]
         public ActionResult About()
         {
             //ViewBag.Message = "Your application description page.";
