@@ -81,9 +81,16 @@ namespace MVC5Course.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductId,ProductName,Price,Active,Stock")] Product product)
+        public ActionResult Edit(int id, FormCollection form)
         {
-            if (ModelState.IsValid)
+            //[Bind(Include = "ProductId,ProductName,Price,Active,Stock")]
+            //Product product
+
+            var product = repo.Get單筆資料ByProductId(id);
+
+            //延遲驗證
+            if (TryUpdateModel(product,
+                new string[] { "ProductId", "ProductName", "Price", "Active", "Stock" }))
             {
                 repo.Update(product);
                 repo.UnitOfWork.Commit();
@@ -128,20 +135,31 @@ namespace MVC5Course.Controllers
             base.Dispose(disposing);
         }
 
-        public ActionResult ListProducts()
+        public ActionResult ListProducts(ProductListSearchVM searchModel)
         {
-            var data = repo.All()
-                .Where(p => p.Active == true)
-                .Select(p => new ProductLiteVM
-                {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    Price = p.Price,
-                    Stock = p.Stock,
-                })
-                .Take(10);
+            var data = repo.All();
 
-            return View(data);
+            if (ModelState.IsValid)
+            {
+                if (!string.IsNullOrWhiteSpace(searchModel.q))
+                {
+                    data = data.Where(x => x.ProductName.Contains(searchModel.q));
+                }
+            }
+
+            data = data.Where(p => p.Stock > searchModel.stock_min && p.Stock < searchModel.stock_max);
+
+            ViewData.Model = data.Where(p => p.Active == true)
+                                 .Select(p => new ProductLiteVM
+                                 {
+                                     ProductId = p.ProductId,
+                                     ProductName = p.ProductName,
+                                     Price = p.Price,
+                                     Stock = p.Stock,
+                                 })
+                                 .Take(10);
+
+            return View();
         }
 
         public ActionResult CreateProduct()
@@ -154,12 +172,61 @@ namespace MVC5Course.Controllers
         {
             if (ModelState.IsValid)
             {
+                TempData["CreatProductResult"] = "新增商品成功";
+
                 //TODO: 儲存資料進資料庫
-                return RedirectToAction("ListProduct");
+                return RedirectToAction("ListProducts");
             }
 
             //驗證失敗, 繼續顯示原本的表單
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult ListProducts(ProductListSearchVM searchCondition, ProductBatchUpdateVM[] items)
+        {
+            // TryUpdateModel(searchCondition, "searchCondition")
+            if (ModelState.IsValid)
+            {
+                foreach (var item in items)
+                {
+                    var prod = db.Product.Find(item.ProductId);
+                    prod.Price = item.Price;
+                    prod.Stock = item.Stock;
+                }
+
+                db.Configuration.ValidateOnSaveEnabled = false;
+                db.SaveChanges();
+
+                return RedirectToAction("ListProducts", searchCondition);
+            }
+
+            GetProductListBySearch(searchCondition);
+
+            return View("ListProducts");
+        }
+
+        private void GetProductListBySearch(ProductListSearchVM searchCondition)
+        {
+            var data = repo.GetProduct列表頁所有資料(true);
+
+            if (!String.IsNullOrEmpty(searchCondition.q))
+            {
+                data = data.Where(p => p.ProductName.Contains(searchCondition.q));
+            }
+
+            data = data.Where(p => p.Stock > searchCondition.stock_min && p.Stock < searchCondition.stock_max);
+
+            ViewData.Model = data
+                .Select(p => new ProductLiteVM()
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    Price = p.Price,
+                    Stock = p.Stock
+                });
+
+            ViewBag.searchCondition = searchCondition;
         }
     }
 }

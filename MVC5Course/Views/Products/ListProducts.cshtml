@@ -4,42 +4,61 @@
     ViewBag.Title = "ListProducts";
 }
 
-<h2>ListProducts</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ProductId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ProductName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Price)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Stock)
-        </th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Price)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Stock)
-        </td>
-    </tr>
+@if (TempData["CreatProductResult"] != null)
+{
+    <h1>@TempData["CreatProductResult"]</h1>
 }
 
-</table>
+<h2>ListProducts</h2>
+
+<form method="get">
+    商品名稱:
+    @Html.TextBox("searchCondition.q")
+    庫存:
+    @Html.TextBox("searchCondition.stock_min")
+    ~
+    @Html.TextBox("searchCondition.stock_max")
+    <button>搜尋</button>
+</form>
+
+@using (Html.BeginForm())
+{
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock)
+            </th>
+        </tr>
+        @{
+            var items = Model.ToArray();
+        }}
+        @for (var i = 0; i < items.Length; i++)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => items[i].ProductId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => items[i].ProductName)
+                </td>
+                <td>
+                    @Html.EditorFor(modelItem => items[i].Price)
+                </td>
+                <td>
+                    @Html.EditorFor(modelItem => items[i].Stock)
+                </td>
+            </tr>
+        }
+    </table>
+
+    <button>批次更新</button>
+}
