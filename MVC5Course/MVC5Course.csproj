@@ -187,6 +187,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="ActionFilter\LocalOnlyAttribute.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MetroController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="ActionFilter\SharedViewBagAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -420,6 +421,10 @@
     <Content Include="Views\Shared\Error_DbEntityValidationException.cshtml" />
     <Content Include="Views\Home\VT.cshtml" />
     <Content Include="Views\Home\RazorTest.cshtml" />
+    <Content Include="Views\Metro\Index.cshtml" />
+    <Content Include="Views\Metro\_Layout.cshtml" />
+    <Content Include="Views\Metro\_ViewStart.cshtml" />
+    <Content Include="Views\Metro\Tasks.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
