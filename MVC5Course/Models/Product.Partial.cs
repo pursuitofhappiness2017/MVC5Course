@@ -27,17 +27,17 @@ namespace MVC5Course.Models
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (this.Price > 100 && this.Stock < 5)
-            {
-                yield return new ValidationResult("價格與庫存數量不合理",
-                    new string[] { "Price", "Stock" });
-            }
+            //if (this.Price > 100 && this.Stock < 5)
+            //{
+            //    yield return new ValidationResult("價格與庫存數量不合理",
+            //        new string[] { "Price", "Stock" });
+            //}
 
-            if (this.OrderLine.Count() > 5 && this.Stock == 0)
-            {
-                yield return new ValidationResult("Stock 與訂單數量不匹配",
-                    new string[] { "Price", "Stock" });
-            }
+            //if (this.OrderLine.Count() > 5 && this.Stock == 0)
+            //{
+            //    yield return new ValidationResult("Stock 與訂單數量不匹配",
+            //        new string[] { "Price", "Stock" });
+            //}
 
             yield break;
         }
