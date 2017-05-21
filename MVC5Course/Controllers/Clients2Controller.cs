@@ -15,9 +15,34 @@ namespace MVC5Course.Controllers
         private FabricsEntities db = new FabricsEntities();
 
         // GET: Clients2
-        public ActionResult Index()
+        public ActionResult Index(int? CreditRatingFilter, string LastNameFilter)
         {
+            var ratings = (from p in db.Client
+                           select p.CreditRating)
+                           .Distinct()
+                           .OrderBy(p => p).ToList();
+
+            ViewBag.CreditRatingFilter = new SelectList(ratings);
+
+            var lastNames = (from p in db.Client
+                           select p.LastName)
+                           .Distinct()
+                           .OrderBy(p => p).ToList();
+
+            ViewBag.LastNameFilter = new SelectList(lastNames);
+
             var client = db.Client.Include(c => c.Occupation);
+
+            if (CreditRatingFilter.HasValue)
+            {
+                client = client.Where(c => c.CreditRating == CreditRatingFilter.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(LastNameFilter))
+            {
+                client = client.Where(c => c.LastName == LastNameFilter);
+            }
+
             return View(client.Take(10).ToList());
         }
 

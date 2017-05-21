@@ -6,9 +6,16 @@
 
 <h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+@using (Html.BeginForm("Index", "Clients2", FormMethod.Get))
+{
+    <text>
+    篩選:
+    @Html.DropDownList("CreditRatingFilter", "選擇信用等級")
+    @Html.DropDownList("LastNameFilter", "選擇姓")
+    <input type="submit" />
+    </text>
+}
+
 <table class="table">
     <tr>
         <th>
