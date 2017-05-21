@@ -22,10 +22,12 @@ namespace MVC5Course.Models
         
         [StringLength(40, ErrorMessage="欄位長度不得大於 40 個字元")]
         public string LastName { get; set; }
-        
+
+        [UIHint("Gender")]
         [StringLength(1, ErrorMessage="欄位長度不得大於 1 個字元")]
         public string Gender { get; set; }
         public Nullable<System.DateTime> DateOfBirth { get; set; }
+        [UIHint("CreditRating")]
         public Nullable<double> CreditRating { get; set; }
         
         [StringLength(7, ErrorMessage="欄位長度不得大於 7 個字元")]
